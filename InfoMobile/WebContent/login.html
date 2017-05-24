@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+$("#formoid").submit(function(event) {
+	event.preventDefault();
+    var $form = $( this ),
+      url = $form.attr( 'action' );
+    var userId = $("#loginID").val();
+    var userPassword = $("#loginPWD").val();
+	var url = $form.attr( 'action' );
+    jQuery.ajax({
+		url : url,
+		type : 'POST',
+		headers : {
+			'Authorization' : 'Basic SW5mb01vYmlsZUF1dGhDb2RlOjAwMA=='
+		},
+		data : { userId: userId, password : userPassword},
+		success: function(data){
+			var jsonData = JSON.parse(data)
+			 console.log(data+"  "+jsonData.response)
+		 if(jsonData.response == 'success')
+				{
+
+			    jQuery.ajax({
+					url : 'admin.jsp',
+					type : 'POST',
+					headers : {
+						'Authorization' : 'Basic SW5mb01vYmlsZUF1dGhDb2RlOjAwMA=='
+					},
+					data : { token: jsonData.token},
+					success: function(data){
+					    document.open();
+					    document.write(data);
+					    document.close();
+						}
+					});
+				//window.location.href = "admin.jsp?token="+jsonData.token
+				} 
+			},
+		error: function(data){
+			alert("111");
+			}
+	});
+});
+
+$("#getUser").click(function(event) {
+	alert("11");
+	event.preventDefault();
+    jQuery.ajax({
+		url : "rest/UserService/users",
+		type : 'GET',
+		crossDomain: true,
+		headers : {
+			'Authorization' : 'Basic SW5mb01vYmlsZUF1dGhDb2RlOjAwMA=='
+		},
+	});
+});
+});
+</script>
+</head>
+<body>
+<div>	Login<br/><br/>
+		<form id="formoid" method="post" action="rest/UserService/login">
+			<label>User ID</label>
+			<input type="text" name="userId" id="loginID"/>
+			<br/><br/>
+			<label>Password</label>
+			<input type="text" name="password" id="loginPWD"/>
+			<br/>
+			<br/>
+			<input type="submit" value="Submit" />
+		</form>
+</div>
+<br/><br/>
+
+</body>
+</html>
